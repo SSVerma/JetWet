@@ -1,7 +1,12 @@
 package com.example.androiddevchallenge.ui.home
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,6 +24,8 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -27,6 +34,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.androiddevchallenge.R
 import com.example.androiddevchallenge.data.Weather
 import com.example.androiddevchallenge.data.mockWeather
@@ -36,7 +44,8 @@ import com.example.androiddevchallenge.ui.theme.LocalImages
 import com.example.androiddevchallenge.ui.theme.yellow200
 
 @Composable
-fun HomeScreen(onFutureForeCastClicked: () -> Unit) {
+fun HomeScreen(onFutureForeCastClicked: () -> Unit, viewModel: HomeViewModel = viewModel()) {
+
     Column(
         modifier = Modifier
             .background(MaterialTheme.colors.primaryVariant)
@@ -58,7 +67,10 @@ fun HomeScreen(onFutureForeCastClicked: () -> Unit) {
                 .padding(start = 32.dp, end = 16.dp, bottom = 16.dp)
         )
         HomeTodayChangesBar(
-            onFutureForeCastClicked,
+            onFutureForeCastClicked = onFutureForeCastClicked,
+            onTodayChangesClicked = {
+                viewModel.onTodayChangesExpansionStateChanged()
+            },
             modifier = Modifier
                 .background(
                     color = MaterialTheme.colors.background,
@@ -74,9 +86,7 @@ fun HomeWeatherContent(weather: Weather, modifier: Modifier = Modifier) {
     Box(modifier = modifier) {
         WeatherInfo(
             weather = weather,
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .offset(y = (-32).dp)
+            modifier = Modifier.align(Alignment.TopStart)
         )
         Image(
             painter = painterResource(id = weather.illustrationRes),
@@ -91,32 +101,87 @@ fun HomeWeatherContent(weather: Weather, modifier: Modifier = Modifier) {
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun WeatherInfo(weather: Weather, modifier: Modifier = Modifier) {
+fun WeatherInfo(
+    weather: Weather,
+    modifier: Modifier = Modifier,
+    viewModel: HomeViewModel = viewModel()
+) {
+
+    val isTodayChangesExpanded by viewModel.todayChangeExpanded.observeAsState(false)
+
+    val temperatureFontSize by animateIntAsState(
+        targetValue = if (isTodayChangesExpanded) 28 else 60
+    )
+
+    val temperatureStartSpacing by animateDpAsState(
+        targetValue = if (isTodayChangesExpanded) 72.dp else 0.dp
+    )
+
+    val weatherIconTopOffset by animateDpAsState(
+        targetValue = if (isTodayChangesExpanded) 48.dp else 0.dp
+    )
+
+    val weatherInfoTopOffset by animateDpAsState(
+        targetValue = if (isTodayChangesExpanded) 0.dp else 24.dp
+    )
+
     Column(
-        modifier = modifier
+        modifier = modifier.offset(y = -weatherInfoTopOffset)
     ) {
         DegreeText(
             text = weather.temperature.toString(),
             color = MaterialTheme.colors.onPrimary,
-            style = MaterialTheme.typography.h2
+            style = MaterialTheme.typography.h2.copy(fontSize = temperatureFontSize.sp),
+            modifier = Modifier.padding(start = temperatureStartSpacing)
         )
-        Text(
-            text = stringResource(id = weather.statusRes),
-            color = MaterialTheme.colors.onPrimary,
-            style = MaterialTheme.typography.body1,
-            modifier = Modifier.padding(start = 8.dp)
-        )
+        AnimatedVisibility(visible = !isTodayChangesExpanded) {
+            Text(
+                text = stringResource(id = weather.statusRes),
+                color = MaterialTheme.colors.onPrimary,
+                style = MaterialTheme.typography.body1,
+                modifier = Modifier.padding(start = 8.dp)
+            )
+        }
         Icon(
             painter = painterResource(id = weather.iconRes),
             contentDescription = stringResource(R.string.accessibility_weather_status_icon),
             tint = MaterialTheme.colors.onPrimary,
+            modifier = Modifier.offset(y = -weatherIconTopOffset)
         )
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun HomeTopAppBar() {
+fun HomeTopAppBar(viewModel: HomeViewModel = viewModel()) {
+    val isTodayChangesExpanded by viewModel.todayChangeExpanded.observeAsState(false)
+
+    val appbarBottomPadding by animateDpAsState(
+        targetValue = if (isTodayChangesExpanded) 16.dp else 32.dp
+    )
+
+    val appbarBottomCurve by animateDpAsState(
+        targetValue = if (isTodayChangesExpanded) 64.dp else 48.dp
+    )
+
+    val appbarTitleSize by animateIntAsState(
+        targetValue = if (isTodayChangesExpanded) 16 else 20
+    )
+
+    val appbarLogoSize by animateDpAsState(
+        targetValue = if (isTodayChangesExpanded) 32.dp else 56.dp
+    )
+
+    val hamburgerBottomCurve by animateDpAsState(
+        targetValue = if (isTodayChangesExpanded) 48.dp else 0.dp
+    )
+
+    val hamburgerVerticalPadding by animateDpAsState(
+        targetValue = if (isTodayChangesExpanded) 32.dp else 16.dp
+    )
+
     Row(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -126,9 +191,9 @@ fun HomeTopAppBar() {
                 .weight(1f)
                 .background(
                     color = MaterialTheme.colors.background,
-                    shape = RoundedCornerShape(bottomStart = 48.dp)
+                    shape = RoundedCornerShape(bottomStart = appbarBottomCurve)
                 )
-                .padding(start = 32.dp, end = 16.dp, top = 32.dp, bottom = 32.dp)
+                .padding(start = 32.dp, end = 16.dp, top = 32.dp, bottom = appbarBottomPadding)
         ) {
             Image(
                 painter = painterResource(id = LocalImages.current.logo),
@@ -136,26 +201,25 @@ fun HomeTopAppBar() {
                     R.string.accessibility_logo
                 ),
                 modifier = Modifier
-                    .width(56.dp)
+                    .width(appbarLogoSize)
             )
             Text(
                 text = stringResource(id = R.string.app_name),
                 color = MaterialTheme.colors.onBackground,
-                style = MaterialTheme.typography.h6
+                style = MaterialTheme.typography.h6.copy(fontSize = appbarTitleSize.sp)
             )
         }
 
         Column(
-            modifier = Modifier
-                .width(72.dp)
+            modifier = Modifier.width(72.dp)
         ) {
             IconButton(
                 modifier = Modifier
                     .background(
                         color = MaterialTheme.colors.secondary,
-                        shape = RoundedCornerShape(bottomStart = 0.dp)
+                        shape = RoundedCornerShape(bottomStart = hamburgerBottomCurve)
                     )
-                    .padding(horizontal = 16.dp, vertical = 16.dp),
+                    .padding(horizontal = 16.dp, vertical = hamburgerVerticalPadding),
                 onClick = { /*TODO*/ }) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_hamburger),
@@ -166,7 +230,9 @@ fun HomeTopAppBar() {
                 )
             }
 
-            AppBarDate(modifier = Modifier.fillMaxWidth())
+            AnimatedVisibility(visible = !isTodayChangesExpanded) {
+                AppBarDate(modifier = Modifier.fillMaxWidth())
+            }
         }
     }
 }
@@ -196,8 +262,17 @@ fun AppBarDate(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun HomeTodayChangesBar(onFutureForeCastClicked: () -> Unit, modifier: Modifier = Modifier) {
-    Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
+fun HomeTodayChangesBar(
+    onFutureForeCastClicked: () -> Unit,
+    onTodayChangesClicked: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier.clickable {
+            onTodayChangesClicked()
+        }
+    ) {
         Icon(
             imageVector = AppIcons.Timer,
             contentDescription = stringResource(R.string.accessibility_today_changes_icon),

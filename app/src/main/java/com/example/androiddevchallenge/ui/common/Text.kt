@@ -4,6 +4,7 @@ import androidx.compose.material.LocalContentColor
 import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -14,6 +15,7 @@ import androidx.compose.ui.text.withStyle
 @Composable
 fun DegreeText(
     text: String,
+    modifier: Modifier = Modifier,
     color: Color = LocalContentColor.current,
     style: TextStyle = LocalTextStyle.current
 ) {
@@ -25,6 +27,7 @@ fun DegreeText(
             }
         },
         color = color,
-        style = style
+        style = style,
+        modifier = modifier
     )
 }
