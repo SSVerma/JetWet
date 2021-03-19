@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 The Android Open Source Project
+ * Copyright 2020 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.androiddevchallenge
+package com.example.androiddevchallenge.ui.theme
 
-import android.os.Bundle
-import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
+import androidx.annotation.DrawableRes
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.staticCompositionLocalOf
 
-class MainActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            JetWetApp()
-        }
-    }
+@Immutable
+data class Images(
+    @DrawableRes val logo: Int,
+    @DrawableRes val homeIllustration: Int
+)
+
+internal val LocalImages = staticCompositionLocalOf<Images> {
+    error("No LocalImages specified")
 }

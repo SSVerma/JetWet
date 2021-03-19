@@ -9,5 +9,13 @@
       or implied. See the License for the specific language governing permissions and limitations under
       the License.
       -->
-    <string name="app_name">AndroidDevChallenge</string>
+    <string name="app_name">JetWet</string>
+    <string name="accessibility_logo">Logo</string>
+    <string name="accessibility_hamburger">Hamburger</string>
+    <string name="raining">Raining</string>
+    <string name="accessibility_weather_status_icon">Current weather status icon</string>
+    <string name="accessibility_weather_illustration">Weather illustration</string>
+    <string name="today_changes">Today\'s changes</string>
+    <string name="accessibility_today_changes_icon">Today changes icon</string>
+    <string name="accessibility_future_forecast_icon">Future forecast icon</string>
 </resources>
