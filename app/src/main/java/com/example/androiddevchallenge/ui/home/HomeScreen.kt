@@ -6,7 +6,6 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -28,8 +27,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.icons.filled.CalendarToday
-import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -48,10 +45,8 @@ import com.example.androiddevchallenge.R
 import com.example.androiddevchallenge.data.Weather
 import com.example.androiddevchallenge.data.WeatherStatus
 import com.example.androiddevchallenge.data.mockSunnyWeather
-import com.example.androiddevchallenge.ui.common.AppIcons
 import com.example.androiddevchallenge.ui.common.DegreeText
 import com.example.androiddevchallenge.ui.theme.LocalImages
-import com.example.androiddevchallenge.ui.theme.yellow200
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -64,8 +59,10 @@ fun HomeScreen(onFutureForeCastClicked: () -> Unit, viewModel: HomeViewModel = v
     val coroutineScope = rememberCoroutineScope()
 
     BottomSheetScaffold(
+        scaffoldState = bottomSheetScaffoldState,
+        sheetGesturesEnabled = false,
         sheetContent = {
-            HomeTodayChanges(
+            DayChanges(
                 onFutureForeCastClicked = onFutureForeCastClicked,
                 onTodayChangesClicked = {
                     coroutineScope.launch {
@@ -78,7 +75,7 @@ fun HomeScreen(onFutureForeCastClicked: () -> Unit, viewModel: HomeViewModel = v
                     viewModel.onTodayChangesExpansionStateChanged()
                 },
                 modifier = Modifier
-                    .padding(horizontal = 32.dp, vertical = 16.dp)
+                    .padding(horizontal = 24.dp, vertical = 16.dp)
             )
         },
         sheetPeekHeight = BottomSheetPeekHeight
@@ -136,7 +133,7 @@ fun HomeWeatherContent(weather: Weather, modifier: Modifier = Modifier) {
 @Composable
 fun WeatherAnimationEffect(weather: Weather) {
     when (weather.status) {
-        WeatherStatus.Raining -> {
+        WeatherStatus.Rainy -> {
             BoxWithConstraints {
                 RainEffect(
                     width = maxWidth,
@@ -152,7 +149,7 @@ fun WeatherAnimationEffect(weather: Weather) {
                 )
             }
         }
-        WeatherStatus.Snow -> {
+        WeatherStatus.Snowy -> {
             BoxWithConstraints {
                 RainEffect(
                     width = maxWidth,
@@ -167,7 +164,8 @@ fun WeatherAnimationEffect(weather: Weather) {
                 )
             }
         }
-        WeatherStatus.Sunny -> {}
+        WeatherStatus.Sunny -> {
+        }
         WeatherStatus.Cloudy -> TODO()
         WeatherStatus.PartialCloudy -> TODO()
         WeatherStatus.ThunderStorm -> TODO()
@@ -335,62 +333,6 @@ fun AppBarDate(modifier: Modifier = Modifier) {
             style = MaterialTheme.typography.h5,
             color = MaterialTheme.colors.onSecondary
         )
-    }
-}
-
-@Composable
-fun HomeTodayChanges(
-    onFutureForeCastClicked: () -> Unit,
-    onTodayChangesClicked: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column {
-        HomeTodayChangesBar(
-            onFutureForeCastClicked = onFutureForeCastClicked,
-            modifier = modifier.clickable {
-                onTodayChangesClicked()
-            }
-        )
-        Text(text = "blah blah")
-        Text(text = "blah blah")
-        Text(text = "blah blah")
-        Text(text = "blah blah")
-        Text(text = "blah blah")
-        Text(text = "blah blah")
-        Text(text = "blah blah")
-        Text(text = "blah blah")
-        Text(text = "blah blah")
-    }
-}
-
-@Composable
-fun HomeTodayChangesBar(
-    onFutureForeCastClicked: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-    ) {
-        Icon(
-            imageVector = AppIcons.Timer,
-            contentDescription = stringResource(R.string.accessibility_today_changes_icon),
-            tint = yellow200, /*Same color irrespective of theme*/
-            modifier = Modifier.padding(end = 16.dp)
-        )
-        Text(
-            text = stringResource(R.string.today_changes),
-            color = MaterialTheme.colors.onBackground,
-            style = MaterialTheme.typography.subtitle2.copy(fontSize = 16.sp),
-            modifier = Modifier.weight(1f)
-        )
-        IconButton(onClick = onFutureForeCastClicked) {
-            Icon(
-                imageVector = AppIcons.CalendarToday,
-                contentDescription = stringResource(R.string.accessibility_future_forecast_icon),
-                tint = MaterialTheme.colors.secondary
-            )
-        }
     }
 }
 

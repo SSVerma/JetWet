@@ -12,12 +12,12 @@
     <string name="app_name">JetWet</string>
     <string name="accessibility_logo">Logo</string>
     <string name="accessibility_hamburger">Hamburger</string>
-    <string name="raining">Raining</string>
     <string name="accessibility_weather_status_icon">Current weather status icon</string>
     <string name="accessibility_weather_illustration">Weather illustration</string>
     <string name="today_changes">Today\'s changes</string>
     <string name="accessibility_today_changes_icon">Today changes icon</string>
     <string name="accessibility_future_forecast_icon">Future forecast icon</string>
-    <string name="snow_falling">Snow falling</string>
+    <string name="rainy">Rainy</string>
+    <string name="snowy">Snowy</string>
     <string name="sunny">Sunny</string>
 </resources>
