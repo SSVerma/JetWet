@@ -8,24 +8,33 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.BottomSheetScaffold
+import androidx.compose.material.BottomSheetState
+import androidx.compose.material.BottomSheetValue
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -37,15 +46,49 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.androiddevchallenge.R
 import com.example.androiddevchallenge.data.Weather
-import com.example.androiddevchallenge.data.mockWeather
+import com.example.androiddevchallenge.data.WeatherStatus
+import com.example.androiddevchallenge.data.mockSunnyWeather
 import com.example.androiddevchallenge.ui.common.AppIcons
 import com.example.androiddevchallenge.ui.common.DegreeText
 import com.example.androiddevchallenge.ui.theme.LocalImages
 import com.example.androiddevchallenge.ui.theme.yellow200
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HomeScreen(onFutureForeCastClicked: () -> Unit, viewModel: HomeViewModel = viewModel()) {
+    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
+        bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
+    )
 
+    val coroutineScope = rememberCoroutineScope()
+
+    BottomSheetScaffold(
+        sheetContent = {
+            HomeTodayChanges(
+                onFutureForeCastClicked = onFutureForeCastClicked,
+                onTodayChangesClicked = {
+                    coroutineScope.launch {
+                        if (bottomSheetScaffoldState.bottomSheetState.isCollapsed) {
+                            bottomSheetScaffoldState.bottomSheetState.expand()
+                        } else {
+                            bottomSheetScaffoldState.bottomSheetState.collapse()
+                        }
+                    }
+                    viewModel.onTodayChangesExpansionStateChanged()
+                },
+                modifier = Modifier
+                    .padding(horizontal = 32.dp, vertical = 16.dp)
+            )
+        },
+        sheetPeekHeight = BottomSheetPeekHeight
+    ) {
+        HomeContent()
+    }
+}
+
+@Composable
+fun HomeContent() {
     Column(
         modifier = Modifier
             .background(MaterialTheme.colors.primaryVariant)
@@ -53,30 +96,18 @@ fun HomeScreen(onFutureForeCastClicked: () -> Unit, viewModel: HomeViewModel = v
     ) {
         HomeTopAppBar()
         HomeWeatherContent(
-            weather = mockWeather,
+            weather = mockSunnyWeather,
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
                 .padding(horizontal = 32.dp)
         )
         Text(
-            text = mockWeather.city,
+            text = mockSunnyWeather.city,
             color = MaterialTheme.colors.onPrimary,
             style = MaterialTheme.typography.h3,
             modifier = Modifier
-                .padding(start = 32.dp, end = 16.dp, bottom = 16.dp)
-        )
-        HomeTodayChangesBar(
-            onFutureForeCastClicked = onFutureForeCastClicked,
-            onTodayChangesClicked = {
-                viewModel.onTodayChangesExpansionStateChanged()
-            },
-            modifier = Modifier
-                .background(
-                    color = MaterialTheme.colors.background,
-                    shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)
-                )
-                .padding(horizontal = 32.dp, vertical = 16.dp)
+                .padding(start = 32.dp, end = 16.dp, bottom = BottomSheetPeekHeight + 16.dp)
         )
     }
 }
@@ -88,6 +119,7 @@ fun HomeWeatherContent(weather: Weather, modifier: Modifier = Modifier) {
             weather = weather,
             modifier = Modifier.align(Alignment.TopStart)
         )
+        WeatherAnimationEffect(weather)
         Image(
             painter = painterResource(id = weather.illustrationRes),
             contentDescription = stringResource(R.string.accessibility_weather_illustration),
@@ -98,6 +130,48 @@ fun HomeWeatherContent(weather: Weather, modifier: Modifier = Modifier) {
                 .scale(scaleX = -1f, scaleY = 1f)
                 .offset(x = (-80).dp)
         )
+    }
+}
+
+@Composable
+fun WeatherAnimationEffect(weather: Weather) {
+    when (weather.status) {
+        WeatherStatus.Raining -> {
+            BoxWithConstraints {
+                RainEffect(
+                    width = maxWidth,
+                    height = maxHeight,
+                    drop = {
+                        RainDrop(
+                            modifier = Modifier
+                                .width(2.dp)
+                                .height(4.dp)
+                                .background(MaterialTheme.colors.onPrimary)
+                        )
+                    }
+                )
+            }
+        }
+        WeatherStatus.Snow -> {
+            BoxWithConstraints {
+                RainEffect(
+                    width = maxWidth,
+                    height = maxHeight,
+                    randomizeDropSize = true,
+                    drop = {
+                        SnowDrop(
+                            modifier = Modifier,
+                            tint = MaterialTheme.colors.onPrimary
+                        )
+                    }
+                )
+            }
+        }
+        WeatherStatus.Sunny -> {}
+        WeatherStatus.Cloudy -> TODO()
+        WeatherStatus.PartialCloudy -> TODO()
+        WeatherStatus.ThunderStorm -> TODO()
+        WeatherStatus.Tornado -> TODO()
     }
 }
 
@@ -120,7 +194,7 @@ fun WeatherInfo(
     )
 
     val weatherIconTopOffset by animateDpAsState(
-        targetValue = if (isTodayChangesExpanded) 48.dp else 0.dp
+        targetValue = if (isTodayChangesExpanded) 52.dp else 0.dp
     )
 
     val weatherInfoTopOffset by animateDpAsState(
@@ -141,14 +215,17 @@ fun WeatherInfo(
                 text = stringResource(id = weather.statusRes),
                 color = MaterialTheme.colors.onPrimary,
                 style = MaterialTheme.typography.body1,
-                modifier = Modifier.padding(start = 8.dp)
+                modifier = Modifier.padding(start = 4.dp)
             )
         }
         Icon(
             painter = painterResource(id = weather.iconRes),
             contentDescription = stringResource(R.string.accessibility_weather_status_icon),
             tint = MaterialTheme.colors.onPrimary,
-            modifier = Modifier.offset(y = -weatherIconTopOffset)
+            modifier = Modifier
+                .offset(y = -weatherIconTopOffset)
+                .size(56.dp)
+                .padding(top = 8.dp)
         )
     }
 }
@@ -262,16 +339,38 @@ fun AppBarDate(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun HomeTodayChangesBar(
+fun HomeTodayChanges(
     onFutureForeCastClicked: () -> Unit,
     onTodayChangesClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    Column {
+        HomeTodayChangesBar(
+            onFutureForeCastClicked = onFutureForeCastClicked,
+            modifier = modifier.clickable {
+                onTodayChangesClicked()
+            }
+        )
+        Text(text = "blah blah")
+        Text(text = "blah blah")
+        Text(text = "blah blah")
+        Text(text = "blah blah")
+        Text(text = "blah blah")
+        Text(text = "blah blah")
+        Text(text = "blah blah")
+        Text(text = "blah blah")
+        Text(text = "blah blah")
+    }
+}
+
+@Composable
+fun HomeTodayChangesBar(
+    onFutureForeCastClicked: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.clickable {
-            onTodayChangesClicked()
-        }
+        modifier = modifier
     ) {
         Icon(
             imageVector = AppIcons.Timer,
@@ -294,3 +393,5 @@ fun HomeTodayChangesBar(
         }
     }
 }
+
+private val BottomSheetPeekHeight = 80.dp

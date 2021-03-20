@@ -18,4 +18,6 @@
     <string name="today_changes">Today\'s changes</string>
     <string name="accessibility_today_changes_icon">Today changes icon</string>
     <string name="accessibility_future_forecast_icon">Future forecast icon</string>
+    <string name="snow_falling">Snow falling</string>
+    <string name="sunny">Sunny</string>
 </resources>
