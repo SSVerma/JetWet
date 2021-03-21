@@ -51,7 +51,11 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun HomeScreen(onFutureForeCastClicked: () -> Unit, viewModel: HomeViewModel = viewModel()) {
+fun HomeScreen(
+    onFutureForeCastClicked: () -> Unit,
+    onHamburgerClicked: () -> Unit,
+    viewModel: HomeViewModel = viewModel()
+) {
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
     )
@@ -87,18 +91,18 @@ fun HomeScreen(onFutureForeCastClicked: () -> Unit, viewModel: HomeViewModel = v
         },
         sheetPeekHeight = BottomSheetPeekHeight
     ) {
-        HomeContent()
+        HomeContent(onHamburgerClicked = onHamburgerClicked)
     }
 }
 
 @Composable
-fun HomeContent() {
+fun HomeContent(onHamburgerClicked: () -> Unit) {
     Column(
         modifier = Modifier
             .background(MaterialTheme.colors.primaryVariant)
             .fillMaxSize()
     ) {
-        HomeTopAppBar()
+        HomeTopAppBar(onHamburgerClicked = onHamburgerClicked)
         HomeWeatherContent(
             weather = mockSunnyWeather,
             modifier = Modifier
@@ -237,7 +241,7 @@ fun WeatherInfo(
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun HomeTopAppBar(viewModel: HomeViewModel = viewModel()) {
+fun HomeTopAppBar(onHamburgerClicked: () -> Unit, viewModel: HomeViewModel = viewModel()) {
     val isTodayChangesExpanded by viewModel.todayChangeExpanded.observeAsState(false)
 
     val appbarBottomPadding by animateDpAsState(
@@ -302,7 +306,8 @@ fun HomeTopAppBar(viewModel: HomeViewModel = viewModel()) {
                         shape = RoundedCornerShape(bottomStart = hamburgerBottomCurve)
                     )
                     .padding(horizontal = 16.dp, vertical = hamburgerVerticalPadding),
-                onClick = { /*TODO*/ }) {
+                onClick = onHamburgerClicked
+            ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_hamburger),
                     contentDescription = stringResource(

@@ -1,4 +1,4 @@
-package com.example.androiddevchallenge.ui.upcoming
+package com.example.androiddevchallenge.ui
 
 import androidx.compose.runtime.Composable
 

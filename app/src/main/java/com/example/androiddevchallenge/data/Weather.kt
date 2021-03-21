@@ -32,6 +32,13 @@ data class HourlyWeather(
     val weather: Weather
 )
 
+data class CityWeather(
+    val city: String,
+    val isCurrentCity: Boolean,
+    val currentTime: String,
+    val weather: Weather
+)
+
 val mockRainingWeather = Weather(
     status = WeatherStatus.Rainy,
     temperature = 19,
@@ -172,3 +179,30 @@ val mockHourlyWeathers = mockWeathers.mapIndexed { index, weather ->
         isCurrentHour = index == mockWeathers.size - 2
     )
 }
+
+val mockCityWeathers = listOf(
+    CityWeather(
+        city = "Paris",
+        currentTime = "11:25",
+        isCurrentCity = true,
+        weather = mockRainingWeather.copy(temperature = 22),
+    ),
+    CityWeather(
+        city = "London",
+        currentTime = "10:25",
+        isCurrentCity = false,
+        weather = mockSnowWeather.copy(temperature = 24),
+    ),
+    CityWeather(
+        city = "Naples",
+        currentTime = "11:35",
+        isCurrentCity = false,
+        weather = mockSunnyWeather.copy(temperature = 27),
+    ),
+    CityWeather(
+        city = "Brussels",
+        currentTime = "10:16",
+        isCurrentCity = false,
+        weather = mockSunnyWeather.copy(temperature = 21),
+    )
+)

@@ -22,12 +22,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigate
 import androidx.navigation.compose.rememberNavController
+import com.example.androiddevchallenge.ui.CityForecastScreen
+import com.example.androiddevchallenge.ui.FutureForecastScreen
 import com.example.androiddevchallenge.ui.home.HomeScreen
-import com.example.androiddevchallenge.ui.upcoming.FutureForecastScreen
 
 object AppDestinations {
     const val HOME_ROUTE = "home"
     const val FUTURE_FORECAST_ROUTE = "future_forecast"
+    const val CITY_FORECAST_ROUTE = "city_forecast"
 }
 
 @Composable
@@ -41,13 +43,26 @@ fun NavigationGraph(startDestination: String = AppDestinations.HOME_ROUTE) {
         startDestination = startDestination
     ) {
         composable(AppDestinations.HOME_ROUTE) {
-            HomeScreen(onFutureForeCastClicked = {
-                actions.onFutureForecastClick()
-            })
+            HomeScreen(
+                onFutureForeCastClicked = {
+                    actions.onFutureForecastClick()
+                },
+                onHamburgerClicked = {
+                    actions.onCityForecastClick()
+                }
+            )
         }
 
         composable(AppDestinations.FUTURE_FORECAST_ROUTE) {
             FutureForecastScreen()
+        }
+
+        composable(AppDestinations.CITY_FORECAST_ROUTE) {
+            CityForecastScreen(
+                onBackPressed = {
+                    actions.onBackPress()
+                }
+            )
         }
     }
 }
@@ -55,6 +70,9 @@ fun NavigationGraph(startDestination: String = AppDestinations.HOME_ROUTE) {
 class AppNavigationActions(navController: NavHostController) {
     val onFutureForecastClick: () -> Unit = {
         navController.navigate(AppDestinations.FUTURE_FORECAST_ROUTE)
+    }
+    val onCityForecastClick: () -> Unit = {
+        navController.navigate(AppDestinations.CITY_FORECAST_ROUTE)
     }
     val onBackPress: () -> Unit = {
         navController.navigateUp()

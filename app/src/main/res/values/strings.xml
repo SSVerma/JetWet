@@ -20,4 +20,6 @@
     <string name="rainy">Rainy</string>
     <string name="snowy">Snowy</string>
     <string name="sunny">Sunny</string>
+    <string name="accessibility_close_icon">Close icon</string>
+    <string name="city_forecast">City Forecast</string>
 </resources>
