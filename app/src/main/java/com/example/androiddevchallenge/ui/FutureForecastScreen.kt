@@ -1,6 +1,5 @@
 package com.example.androiddevchallenge.ui
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -8,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -33,7 +33,7 @@ fun FutureForecastScreen(
 ) {
     IllustratedBackground {
         Column {
-            AppTopAppBar(titleRes = R.string.future_forecast, onBackPressed = onBackPressed)
+            AppTopAppBar(titleRes = R.string.future_weather_forecast, onBackPressed = onBackPressed)
             Text(
                 text = cityName,
                 color = MaterialTheme.colors.onPrimary,
@@ -42,13 +42,14 @@ fun FutureForecastScreen(
                     .align(Alignment.CenterHorizontally)
                     .padding(vertical = 24.dp)
             )
-            DayForecastSection(
-                days = mockDayWeathers,
-                modifier = Modifier.background(
-                    color = MaterialTheme.colors.background,
-                    shape = MaterialTheme.shapes.large
-                ),
-            )
+            Card(
+                shape = MaterialTheme.shapes.large,
+                backgroundColor = MaterialTheme.colors.surface
+            ) {
+                DayForecastSection(
+                    days = mockDayWeathers,
+                )
+            }
         }
     }
 }
@@ -87,19 +88,19 @@ fun DayForecastItem(
             Text(
                 text = dayWeather.day,
                 style = MaterialTheme.typography.body1.copy(fontSize = 20.sp),
-                color = MaterialTheme.colors.onBackground.copy(alpha = 0.54f),
+                color = MaterialTheme.colors.onSurface.copy(alpha = 0.54f),
             )
             Spacer(modifier = Modifier.size(8.dp))
             Text(
                 text = stringResource(id = dayWeather.weather.statusRes),
                 style = MaterialTheme.typography.body2,
-                color = MaterialTheme.colors.onBackground.copy(alpha = 0.87f),
+                color = MaterialTheme.colors.onSurface.copy(alpha = 0.87f),
             )
         }
         DegreeText(
             text = dayWeather.weather.temperature.toString(),
             style = MaterialTheme.typography.body1.copy(fontSize = 32.sp),
-            color = MaterialTheme.colors.onBackground.copy(alpha = 0.87f),
+            color = MaterialTheme.colors.onSurface.copy(alpha = 0.87f),
             modifier = Modifier.padding(end = 32.dp)
         )
         Icon(

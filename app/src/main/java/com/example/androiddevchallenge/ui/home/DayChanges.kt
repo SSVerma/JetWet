@@ -86,7 +86,7 @@ fun DayChangesHeader(
         Icon(
             imageVector = AppIcons.Timer,
             contentDescription = stringResource(R.string.accessibility_today_changes_icon),
-            tint = yellow200, /*Same color irrespective of theme*/
+            tint = MaterialTheme.colors.secondary,
             modifier = Modifier.padding(end = 16.dp)
         )
         Text(
@@ -122,13 +122,13 @@ fun DayHighlights(weather: Weather, modifier: Modifier = Modifier) {
         DayHighlightItem(
             iconRes = weather.iconRes,
             text = stringResource(id = weather.statusRes),
-            iconColor = MaterialTheme.colors.primary,
+            iconColor = MaterialTheme.colors.onSurface,
             modifier = Modifier.weight(0.5f)
         )
         DayHighlightItem(
             iconRes = R.drawable.ic_wind,
             text = weather.wind,
-            iconColor = MaterialTheme.colors.secondary,
+            iconColor = MaterialTheme.colors.onSurface,
             modifier = Modifier.weight(0.5f)
         )
     }
@@ -219,9 +219,9 @@ fun GroupedHourlyWeather(
 @Composable
 fun HourItem(hour: String, isCurrentHour: Boolean, modifier: Modifier = Modifier) {
     val contentColor = if (isCurrentHour) {
-        MaterialTheme.colors.primary
+        MaterialTheme.colors.secondary
     } else {
-        MaterialTheme.colors.onBackground.copy(alpha = 0.54f)
+        MaterialTheme.colors.onSurface//.copy(alpha = 0.54f)
     }
 
     Text(
@@ -240,9 +240,9 @@ fun HourlyWeatherItem(
     modifier: Modifier = Modifier
 ) {
     val contentColor = if (isCurrentHour) {
-        MaterialTheme.colors.primary
+        MaterialTheme.colors.secondary
     } else {
-        MaterialTheme.colors.onBackground.copy(alpha = 0.54f)
+        MaterialTheme.colors.onSurface//.copy(alpha = 0.54f)
     }
 
     Row(

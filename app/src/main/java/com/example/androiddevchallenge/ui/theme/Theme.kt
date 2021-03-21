@@ -25,11 +25,11 @@ import androidx.compose.ui.graphics.Color
 import com.example.androiddevchallenge.R
 
 private val DarkColorPalette = darkColors(
-    primary = green900,
+    primary = green600,
     primaryVariant = green900,
-    secondary = green300,
+    secondary = purple200,
     background = gray,
-    surface = yellowDarkPrimary,
+    surface = gray,
     onPrimary = Color.White,
     onSecondary = gray,
     onBackground = Color.White,
@@ -46,13 +46,11 @@ private val LightColorPalette = lightColors(
 )
 
 private val LightImages = Images(
-    logo = R.drawable.ic_logo,
-    homeIllustration = R.drawable.illus_raining
+    logo = R.drawable.ic_logo_light
 )
 
 private val DarkImages = Images(
-    logo = R.drawable.ic_logo,
-    homeIllustration = R.drawable.illus_raining //TODO: Update
+    logo = R.drawable.ic_logo_dark
 )
 
 @Composable

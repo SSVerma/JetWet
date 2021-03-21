@@ -1,7 +1,6 @@
 package com.example.androiddevchallenge.ui
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -34,20 +34,21 @@ import com.example.androiddevchallenge.ui.common.IllustratedBackground
 fun CityForecastScreen(onBackPressed: () -> Unit) {
     IllustratedBackground {
         Column {
-            AppTopAppBar(titleRes = R.string.city_forecast, onBackPressed = onBackPressed)
+            AppTopAppBar(titleRes = R.string.city_weather_forecast, onBackPressed = onBackPressed)
             SunriseSunsetSection(
                 weather = mockSunnyWeather,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 24.dp)
             )
-            CityWeatherSection(
-                cities = mockCityWeathers,
-                modifier = Modifier.background(
-                    color = MaterialTheme.colors.background,
-                    shape = MaterialTheme.shapes.large
-                ),
-            )
+            Card(
+                shape = MaterialTheme.shapes.large,
+                backgroundColor = MaterialTheme.colors.surface
+            ) {
+                CityWeatherSection(
+                    cities = mockCityWeathers
+                )
+            }
         }
     }
 }
@@ -80,7 +81,7 @@ fun CityWeatherItem(
         Text(
             text = cityWeather.city,
             style = MaterialTheme.typography.body1.copy(fontSize = 24.sp),
-            color = MaterialTheme.colors.onBackground.copy(alpha = 0.54f),
+            color = MaterialTheme.colors.onSurface.copy(alpha = 0.54f),
             modifier = Modifier
                 .weight(1f)
                 .padding(end = 16.dp)
@@ -89,12 +90,12 @@ fun CityWeatherItem(
             DegreeText(
                 text = cityWeather.weather.temperature.toString(),
                 style = MaterialTheme.typography.body1.copy(fontSize = 32.sp),
-                color = MaterialTheme.colors.onBackground.copy(alpha = 0.87f),
+                color = MaterialTheme.colors.onSurface.copy(alpha = 0.87f),
             )
             Text(
                 text = cityWeather.currentTime,
                 style = MaterialTheme.typography.body2,
-                color = MaterialTheme.colors.onBackground.copy(alpha = 0.87f),
+                color = MaterialTheme.colors.onSurface.copy(alpha = 0.87f),
             )
         }
         Icon(

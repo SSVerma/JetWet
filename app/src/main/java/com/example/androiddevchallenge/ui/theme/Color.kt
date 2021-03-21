@@ -25,11 +25,9 @@ val pink500 = Color(0xFFFF426C)
 val pink700 = Color(0xFFE72E58)
 
 val yellow200 = Color(0xFFFFC946)
-val yellowDarkPrimary = Color(0xFF242316)
 
 val gray = Color(0xFF232323)
 val white850 = Color(0xD9FFFFFF)
-val white150 = Color(0x26FFFFFF)
 
 val green900 = Color(0xFF2D3B2D)
-val green300 = Color(0xFFB8C9B8)
+val green600 = Color(0xFF5E725E)
