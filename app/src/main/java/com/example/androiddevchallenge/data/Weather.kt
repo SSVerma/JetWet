@@ -66,6 +66,21 @@ sealed class Weather(
         sunriseAt = sunriseAt,
         sunsetAt = sunsetAt,
     )
+
+    data class Cloudy(
+        override val temperature: Int,
+        override val wind: String,
+        override val sunriseAt: String,
+        override val sunsetAt: String,
+    ) : Weather(
+        statusRes = R.string.cloudy,
+        iconRes = R.drawable.ic_cloudy,
+        illustrationRes = R.drawable.illus_cloudy,
+        temperature = temperature,
+        wind = wind,
+        sunriseAt = sunriseAt,
+        sunsetAt = sunsetAt,
+    )
 }
 
 data class HourlyWeather(
@@ -112,10 +127,18 @@ val mockSunnyWeather = Weather.Sunny(
     sunsetAt = "18 : 35",
 )
 
+val mockCloudyWeather = Weather.Cloudy(
+    temperature = 16,
+    wind = "Wind EN 19 km/h",
+    sunriseAt = "06 : 08",
+    sunsetAt = "18 : 35",
+)
+
 val mockWeathers = listOf(
     mockRainingWeather,
     mockSnowWeather,
-    mockSunnyWeather
+    mockSunnyWeather,
+    mockCloudyWeather
 )
 
 private val mockTodayWeathers = listOf(

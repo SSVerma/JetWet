@@ -7,8 +7,8 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
@@ -18,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
@@ -33,8 +32,10 @@ fun RainEffect(
     modifier: Modifier = Modifier,
     drop: @Composable () -> Unit,
     denseFactor: Int = 16,
+    randomizeDropSize: Boolean = false,
+    isVertical: Boolean = true,
     dropDimension: DropDimension = DropDefaults.dimensions(),
-    randomizeDropSize: Boolean = false
+    dropSpeed: DropSpeed = DropDefaults.movementSpeed(),
 ) {
     val infiniteTransition = rememberInfiniteTransition()
 
@@ -43,8 +44,8 @@ fun RainEffect(
     val duration = remember {
         generateRandomList(
             size = sections,
-            from = 1500,
-            to = 2500
+            from = dropSpeed.minSpeedMillis,
+            to = dropSpeed.maxSpeedMillis
         )
     }
 
@@ -72,30 +73,60 @@ fun RainEffect(
         }
     }
 
-    Row(
-        modifier = modifier
-            .fillMaxSize()
-            .rotate(5f),
-        horizontalArrangement = Arrangement.SpaceEvenly
-    ) {
+    if (isVertical) {
+        Row(
+            modifier = modifier
+                .width(width = width)
+                .height(height = height),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
 
-        for (i in 0 until sections) {
+            for (i in 0 until sections) {
 
-            val position by infiniteTransition.animateFloat(
-                initialValue = 1f,
-                targetValue = 0f,
-                animationSpec = infiniteRepeatable(
-                    animation = tween(durationMillis = duration[i], easing = LinearEasing)
+                val position by infiniteTransition.animateFloat(
+                    initialValue = 1f,
+                    targetValue = 0f,
+                    animationSpec = infiniteRepeatable(
+                        animation = tween(durationMillis = duration[i], easing = LinearEasing)
+                    )
                 )
-            )
 
-            Box(
-                modifier = Modifier
-                    .offset(y = height - (height * position))
-                    .width(if (randomizeDropSize) dropWidths[i].dp else dropDimension.width)
-                    .height(if (randomizeDropSize) dropHeights[i].dp else dropDimension.height)
-            ) {
-                drop()
+                Box(
+                    modifier = Modifier
+                        .offset(y = height - (height * position))
+                        .width(if (randomizeDropSize) dropWidths[i].dp else dropDimension.width)
+                        .height(if (randomizeDropSize) dropHeights[i].dp else dropDimension.height)
+                ) {
+                    drop()
+                }
+            }
+        }
+    } else {
+        Column(
+            modifier = modifier
+                .width(width = width)
+                .height(height = height),
+            verticalArrangement = Arrangement.SpaceEvenly
+        ) {
+
+            for (i in 0 until sections) {
+
+                val position by infiniteTransition.animateFloat(
+                    initialValue = 1f,
+                    targetValue = 0f,
+                    animationSpec = infiniteRepeatable(
+                        animation = tween(durationMillis = duration[i], easing = LinearEasing)
+                    )
+                )
+
+                Box(
+                    modifier = Modifier
+                        .offset(x = width - (width * position))
+                        .width(if (randomizeDropSize) dropWidths[i].dp else dropDimension.width)
+                        .height(if (randomizeDropSize) dropHeights[i].dp else dropDimension.height)
+                ) {
+                    drop()
+                }
             }
         }
     }
@@ -121,6 +152,19 @@ fun SnowDrop(
     )
 }
 
+@Composable
+fun CloudDrop(
+    modifier: Modifier = Modifier,
+    tint: Color = LocalContentColor.current
+) {
+    Icon(
+        painter = painterResource(id = R.drawable.ic_cloud),
+        contentDescription = null,
+        tint = tint,
+        modifier = modifier
+    )
+}
+
 object DropDefaults {
     private val dropMinWidth = 4.dp
     private val dropMaxWidth = 16.dp
@@ -133,6 +177,11 @@ object DropDefaults {
         dropMaxWidth = dropMaxWidth,
         dropMaxHeight = dropMaxHeight
     )
+
+    fun movementSpeed(): DropSpeed = DropSpeed(
+        minSpeedMillis = 1500,
+        maxSpeedMillis = 2500
+    )
 }
 
 data class DropDimension(
@@ -142,4 +191,9 @@ data class DropDimension(
     val dropMaxHeight: Dp,
     val width: Dp = dropMinWidth,
     val height: Dp = dropMinHeight,
+)
+
+data class DropSpeed(
+    val minSpeedMillis: Int,
+    val maxSpeedMillis: Int
 )

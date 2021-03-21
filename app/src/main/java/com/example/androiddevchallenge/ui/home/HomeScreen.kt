@@ -34,6 +34,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -115,7 +116,6 @@ fun HomeContent(onHamburgerClicked: () -> Unit, viewModel: HomeViewModel = viewM
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .padding(horizontal = 32.dp)
         )
         Text(
             text = viewModel.currentCity.name,
@@ -130,11 +130,13 @@ fun HomeContent(onHamburgerClicked: () -> Unit, viewModel: HomeViewModel = viewM
 @Composable
 fun HomeWeatherContent(weather: Weather, modifier: Modifier = Modifier) {
     Box(modifier = modifier) {
+        WeatherAnimationEffect(weather)
         WeatherInfo(
             weather = weather,
-            modifier = Modifier.align(Alignment.TopStart)
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(horizontal = 32.dp)
         )
-        WeatherAnimationEffect(weather)
         Image(
             painter = painterResource(id = weather.illustrationRes),
             contentDescription = stringResource(R.string.accessibility_weather_illustration),
@@ -163,7 +165,8 @@ fun WeatherAnimationEffect(weather: Weather) {
                                 .height(4.dp)
                                 .background(MaterialTheme.colors.onPrimary)
                         )
-                    }
+                    },
+                    modifier = Modifier.rotate(15f)
                 )
             }
         }
@@ -179,6 +182,32 @@ fun WeatherAnimationEffect(weather: Weather) {
                             tint = MaterialTheme.colors.onPrimary
                         )
                     }
+                )
+            }
+        }
+        is Weather.Cloudy -> {
+            BoxWithConstraints {
+                RainEffect(
+                    width = maxWidth,
+                    height = 200.dp,
+                    randomizeDropSize = true,
+                    isVertical = false,
+                    dropDimension = DropDefaults.dimensions().copy(
+                        dropMinWidth = 48.dp,
+                        dropMaxWidth = 100.dp,
+                        dropMinHeight = 32.dp,
+                        dropMaxHeight = 100.dp
+                    ),
+                    dropSpeed = DropDefaults.movementSpeed().copy(
+                        minSpeedMillis = 2000,
+                        maxSpeedMillis = 3500
+                    ),
+                    drop = {
+                        CloudDrop(
+                            tint = MaterialTheme.colors.onPrimary
+                        )
+                    },
+                    modifier = Modifier.offset(y = (-48).dp)
                 )
             }
         }
