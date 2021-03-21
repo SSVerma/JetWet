@@ -7,7 +7,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,10 +25,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.androiddevchallenge.R
 import com.example.androiddevchallenge.ui.theme.LocalImages
@@ -103,4 +108,45 @@ fun FilledCircle(
             shape = CircleShape
         )
     )
+}
+
+@Composable
+fun GradientDivider(
+    modifier: Modifier = Modifier,
+    colors: List<Color> = listOf(
+        MaterialTheme.colors.primary.copy(
+            alpha = 0.04f
+        ),
+        MaterialTheme.colors.primary.copy(
+            alpha = 0.0f
+        )
+    ),
+    height: Dp = 32.dp
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(height = height)
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = colors
+                )
+            )
+    )
+}
+
+@Composable
+fun IllustratedBackground(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+    Box(modifier = modifier.background(color = MaterialTheme.colors.primary)) {
+        FilledCircle(
+            color = MaterialTheme.colors.primaryVariant,
+            modifier = Modifier
+                .size(300.dp)
+                .offset(x = (-72).dp, y = (-84).dp)
+        )
+        content()
+    }
 }

@@ -38,8 +38,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.androiddevchallenge.R
 import com.example.androiddevchallenge.data.HourlyWeather
 import com.example.androiddevchallenge.data.Weather
-import com.example.androiddevchallenge.data.mockHourlyWeathers
-import com.example.androiddevchallenge.data.mockSunnyWeather
 import com.example.androiddevchallenge.ui.common.AppIcons
 import com.example.androiddevchallenge.ui.common.DegreeText
 import com.example.androiddevchallenge.ui.common.DottedDivider
@@ -65,9 +63,9 @@ fun DayChanges(
                 }
                 .padding(horizontal = 8.dp)
         )
-        DayHighlights(weather = mockSunnyWeather, modifier = Modifier.padding(top = 16.dp))
+        DayHighlights(weather = viewModel.currentWeather, modifier = Modifier.padding(top = 16.dp))
         HourlyWeatherReport(
-            hourlyWeathers = mockHourlyWeathers,
+            hourlyGroupedWeather = viewModel.hourlyGroupedWeather,
             modifier = Modifier.padding(top = 24.dp)
         )
     }
@@ -163,18 +161,15 @@ fun DayHighlightItem(
 
 @Composable
 fun HourlyWeatherReport(
-    hourlyWeathers: List<HourlyWeather>,
+    hourlyGroupedWeather: List<List<HourlyWeather>>,
     modifier: Modifier = Modifier
 ) {
-    val hourlyGroups = remember {
-        hourlyWeathers.chunked(size = 4)
-    }
 
     Column(modifier = modifier) {
-        hourlyGroups.forEach { groups ->
+        hourlyGroupedWeather.forEach { groups ->
             GroupedHourlyWeather(
                 groups = groups,
-                dominatingHourWeather = groups.random(),
+                dominatingHourWeather = remember { groups.random() },
             )
         }
     }

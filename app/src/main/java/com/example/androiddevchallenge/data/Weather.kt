@@ -4,27 +4,69 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.example.androiddevchallenge.R
 
-enum class WeatherStatus {
+/*
     Sunny,
     Cloudy,
     PartialCloudy,
     Rainy,
     Snowy,
-    ThunderStorm,
-    Tornado
-}
+    ThunderStorm
+ */
 
-data class Weather(
-    val status: WeatherStatus,
-    val temperature: Int,
+sealed class Weather(
     @StringRes val statusRes: Int,
     @DrawableRes val iconRes: Int,
     @DrawableRes val illustrationRes: Int,
-    val wind: String,
-    val sunriseAt: String,
-    val sunsetAt: String,
-    val city: String,
-)
+    open val temperature: Int,
+    open val wind: String,
+    open val sunriseAt: String,
+    open val sunsetAt: String,
+) {
+    data class Rainy(
+        override val temperature: Int,
+        override val wind: String,
+        override val sunriseAt: String,
+        override val sunsetAt: String,
+    ) : Weather(
+        statusRes = R.string.rainy,
+        iconRes = R.drawable.ic_rainy,
+        illustrationRes = R.drawable.illus_raining,
+        temperature = temperature,
+        wind = wind,
+        sunriseAt = sunriseAt,
+        sunsetAt = sunsetAt,
+    )
+
+    data class Snowy(
+        override val temperature: Int,
+        override val wind: String,
+        override val sunriseAt: String,
+        override val sunsetAt: String,
+    ) : Weather(
+        statusRes = R.string.snowy,
+        iconRes = R.drawable.ic_snowy,
+        illustrationRes = R.drawable.illus_snowfalling,
+        temperature = temperature,
+        wind = wind,
+        sunriseAt = sunriseAt,
+        sunsetAt = sunsetAt,
+    )
+
+    data class Sunny(
+        override val temperature: Int,
+        override val wind: String,
+        override val sunriseAt: String,
+        override val sunsetAt: String,
+    ) : Weather(
+        statusRes = R.string.sunny,
+        iconRes = R.drawable.ic_sunny,
+        illustrationRes = R.drawable.illus_sunny_day,
+        temperature = temperature,
+        wind = wind,
+        sunriseAt = sunriseAt,
+        sunsetAt = sunsetAt,
+    )
+}
 
 data class HourlyWeather(
     val hour: String,
@@ -32,141 +74,62 @@ data class HourlyWeather(
     val weather: Weather
 )
 
+data class City(
+    val name: String
+)
+
 data class CityWeather(
     val city: String,
-    val isCurrentCity: Boolean,
     val currentTime: String,
     val weather: Weather
 )
 
-val mockRainingWeather = Weather(
-    status = WeatherStatus.Rainy,
+data class DayWeather(
+    val day: String,
+    val weather: Weather
+)
+
+val mockParisCity = City(name = "Paris")
+
+val mockRainingWeather = Weather.Rainy(
     temperature = 19,
-    statusRes = R.string.rainy,
-    iconRes = R.drawable.ic_rainy,
-    illustrationRes = R.drawable.illus_raining,
     wind = "Wind EN 8 km/h",
     sunriseAt = "06 : 00",
     sunsetAt = "18 : 35",
-    city = "Paris"
 )
 
-val mockSnowWeather = Weather(
-    status = WeatherStatus.Snowy,
-    temperature = 8,
-    statusRes = R.string.snowy,
-    iconRes = R.drawable.ic_snowy,
-    illustrationRes = R.drawable.illus_snowfalling,
+val mockSnowWeather = Weather.Snowy(
+    temperature = 10,
     wind = "Wind EN 16 km/h",
-    sunriseAt = "06 : 00",
+    sunriseAt = "06 : 15",
     sunsetAt = "18 : 35",
-    city = "Paris"
 )
 
-val mockSunnyWeather = Weather(
-    status = WeatherStatus.Sunny,
+val mockSunnyWeather = Weather.Sunny(
     temperature = 32,
-    statusRes = R.string.sunny,
-    iconRes = R.drawable.ic_sunny,
-    illustrationRes = R.drawable.illus_sunny_day,
     wind = "Wind EN 19 km/h",
-    sunriseAt = "06 : 00",
+    sunriseAt = "06 : 08",
     sunsetAt = "18 : 35",
-    city = "Paris"
 )
 
 val mockWeathers = listOf(
-    Weather(
-        status = WeatherStatus.Rainy,
-        temperature = 18,
-        statusRes = R.string.rainy,
-        iconRes = R.drawable.ic_rainy,
-        illustrationRes = R.drawable.illus_raining,
-        wind = "Wind EN 8 km/h",
-        sunriseAt = "06 : 00",
-        sunsetAt = "18 : 35",
-        city = "Paris"
-    ),
-    Weather(
-        status = WeatherStatus.Rainy,
-        temperature = 19,
-        statusRes = R.string.rainy,
-        iconRes = R.drawable.ic_rainy,
-        illustrationRes = R.drawable.illus_raining,
-        wind = "Wind EN 8 km/h",
-        sunriseAt = "06 : 00",
-        sunsetAt = "18 : 35",
-        city = "Paris"
-    ),
-    Weather(
-        status = WeatherStatus.Rainy,
-        temperature = 19,
-        statusRes = R.string.rainy,
-        iconRes = R.drawable.ic_rainy,
-        illustrationRes = R.drawable.illus_raining,
-        wind = "Wind EN 5 km/h",
-        sunriseAt = "06 : 00",
-        sunsetAt = "18 : 35",
-        city = "Paris"
-    ),
-    Weather(
-        status = WeatherStatus.Snowy,
-        temperature = 10,
-        statusRes = R.string.snowy,
-        iconRes = R.drawable.ic_snowy,
-        illustrationRes = R.drawable.illus_snowfalling,
-        wind = "Wind EN 16 km/h",
-        sunriseAt = "06 : 00",
-        sunsetAt = "18 : 35",
-        city = "Paris"
-    ),
-    Weather(
-        status = WeatherStatus.Snowy,
-        temperature = 10,
-        statusRes = R.string.snowy,
-        iconRes = R.drawable.ic_snowy,
-        illustrationRes = R.drawable.illus_snowfalling,
-        wind = "Wind EN 16 km/h",
-        sunriseAt = "06 : 00",
-        sunsetAt = "18 : 35",
-        city = "Paris"
-    ),
-    Weather(
-        status = WeatherStatus.Sunny,
-        temperature = 32,
-        statusRes = R.string.sunny,
-        iconRes = R.drawable.ic_sunny,
-        illustrationRes = R.drawable.illus_sunny_day,
-        wind = "Wind EN 19 km/h",
-        sunriseAt = "06 : 00",
-        sunsetAt = "18 : 35",
-        city = "Paris"
-    ),
-    Weather(
-        status = WeatherStatus.Sunny,
-        temperature = 32,
-        statusRes = R.string.sunny,
-        iconRes = R.drawable.ic_sunny,
-        illustrationRes = R.drawable.illus_sunny_day,
-        wind = "Wind EN 19 km/h",
-        sunriseAt = "06 : 00",
-        sunsetAt = "18 : 35",
-        city = "Paris"
-    ),
-    Weather(
-        status = WeatherStatus.Sunny,
-        temperature = 32,
-        statusRes = R.string.sunny,
-        iconRes = R.drawable.ic_sunny,
-        illustrationRes = R.drawable.illus_sunny_day,
-        wind = "Wind EN 19 km/h",
-        sunriseAt = "06 : 00",
-        sunsetAt = "18 : 35",
-        city = "Paris"
-    )
+    mockRainingWeather,
+    mockSnowWeather,
+    mockSunnyWeather
 )
 
-val mockHourlyWeathers = mockWeathers.mapIndexed { index, weather ->
+private val mockTodayWeathers = listOf(
+    mockRainingWeather,
+    mockRainingWeather,
+    mockRainingWeather,
+    mockSnowWeather,
+    mockSnowWeather,
+    mockSunnyWeather.copy(temperature = 22),
+    mockSunnyWeather.copy(temperature = 24),
+    mockSunnyWeather.copy(temperature = 27),
+)
+
+val mockHourlyWeathers = mockTodayWeathers.mapIndexed { index, weather ->
     val startHour = index + 6
     val formattedHour = if (startHour < 10) {
         "0${startHour} : 00"
@@ -176,7 +139,7 @@ val mockHourlyWeathers = mockWeathers.mapIndexed { index, weather ->
     HourlyWeather(
         hour = formattedHour,
         weather = weather,
-        isCurrentHour = index == mockWeathers.size - 2
+        isCurrentHour = index == mockTodayWeathers.size - 2
     )
 }
 
@@ -184,25 +147,52 @@ val mockCityWeathers = listOf(
     CityWeather(
         city = "Paris",
         currentTime = "11:25",
-        isCurrentCity = true,
         weather = mockRainingWeather.copy(temperature = 22),
     ),
     CityWeather(
         city = "London",
         currentTime = "10:25",
-        isCurrentCity = false,
         weather = mockSnowWeather.copy(temperature = 24),
     ),
     CityWeather(
         city = "Naples",
         currentTime = "11:35",
-        isCurrentCity = false,
         weather = mockSunnyWeather.copy(temperature = 27),
     ),
     CityWeather(
         city = "Brussels",
         currentTime = "10:16",
-        isCurrentCity = false,
         weather = mockSunnyWeather.copy(temperature = 21),
     )
+)
+
+val mockDayWeathers = listOf(
+    DayWeather(
+        day = "Monday, 22 March",
+        weather = mockRainingWeather.copy(temperature = 18),
+    ),
+    DayWeather(
+        day = "Tuesday, 23 March",
+        weather = mockRainingWeather.copy(temperature = 18),
+    ),
+    DayWeather(
+        day = "Wednesday, 24 March",
+        weather = mockSnowWeather.copy(temperature = 12),
+    ),
+    DayWeather(
+        day = "Thursday, 25 March",
+        weather = mockSunnyWeather.copy(temperature = 22),
+    ),
+    DayWeather(
+        day = "Friday, 26 March",
+        weather = mockSunnyWeather.copy(temperature = 23),
+    ),
+    DayWeather(
+        day = "Saturday, 27 March",
+        weather = mockSunnyWeather.copy(temperature = 26),
+    ),
+    DayWeather(
+        day = "Sunday, 28 March",
+        weather = mockSunnyWeather.copy(temperature = 25),
+    ),
 )

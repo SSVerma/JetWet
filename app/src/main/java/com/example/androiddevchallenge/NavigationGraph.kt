@@ -18,8 +18,10 @@ package com.example.androiddevchallenge
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.navigate
 import androidx.navigation.compose.rememberNavController
 import com.example.androiddevchallenge.ui.CityForecastScreen
@@ -30,6 +32,7 @@ object AppDestinations {
     const val HOME_ROUTE = "home"
     const val FUTURE_FORECAST_ROUTE = "future_forecast"
     const val CITY_FORECAST_ROUTE = "city_forecast"
+    const val KEY_CITY = "key_city"
 }
 
 @Composable
@@ -44,8 +47,8 @@ fun NavigationGraph(startDestination: String = AppDestinations.HOME_ROUTE) {
     ) {
         composable(AppDestinations.HOME_ROUTE) {
             HomeScreen(
-                onFutureForeCastClicked = {
-                    actions.onFutureForecastClick()
+                onFutureForeCastClicked = { city ->
+                    actions.onFutureForecastClick(city)
                 },
                 onHamburgerClicked = {
                     actions.onCityForecastClick()
@@ -53,8 +56,18 @@ fun NavigationGraph(startDestination: String = AppDestinations.HOME_ROUTE) {
             )
         }
 
-        composable(AppDestinations.FUTURE_FORECAST_ROUTE) {
-            FutureForecastScreen()
+        composable(
+            route = "${AppDestinations.FUTURE_FORECAST_ROUTE}/{${AppDestinations.KEY_CITY}}",
+            arguments = listOf(navArgument(AppDestinations.KEY_CITY) { type = NavType.StringType })
+        ) {
+            val cityName = it.arguments?.getString(AppDestinations.KEY_CITY) ?: ""
+
+            FutureForecastScreen(
+                cityName = cityName,
+                onBackPressed = {
+                    actions.onBackPress()
+                }
+            )
         }
 
         composable(AppDestinations.CITY_FORECAST_ROUTE) {
@@ -68,8 +81,8 @@ fun NavigationGraph(startDestination: String = AppDestinations.HOME_ROUTE) {
 }
 
 class AppNavigationActions(navController: NavHostController) {
-    val onFutureForecastClick: () -> Unit = {
-        navController.navigate(AppDestinations.FUTURE_FORECAST_ROUTE)
+    val onFutureForecastClick: (String) -> Unit = { city ->
+        navController.navigate("${AppDestinations.FUTURE_FORECAST_ROUTE}/$city")
     }
     val onCityForecastClick: () -> Unit = {
         navController.navigate(AppDestinations.CITY_FORECAST_ROUTE)

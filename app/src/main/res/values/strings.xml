@@ -22,4 +22,5 @@
     <string name="sunny">Sunny</string>
     <string name="accessibility_close_icon">Close icon</string>
     <string name="city_forecast">City Forecast</string>
+    <string name="future_forecast">Future Forecast</string>
 </resources>

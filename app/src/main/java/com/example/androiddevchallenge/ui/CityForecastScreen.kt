@@ -3,12 +3,9 @@ package com.example.androiddevchallenge.ui
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,7 +16,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -31,17 +27,12 @@ import com.example.androiddevchallenge.data.mockCityWeathers
 import com.example.androiddevchallenge.data.mockSunnyWeather
 import com.example.androiddevchallenge.ui.common.AppTopAppBar
 import com.example.androiddevchallenge.ui.common.DegreeText
-import com.example.androiddevchallenge.ui.common.FilledCircle
+import com.example.androiddevchallenge.ui.common.GradientDivider
+import com.example.androiddevchallenge.ui.common.IllustratedBackground
 
 @Composable
 fun CityForecastScreen(onBackPressed: () -> Unit) {
-    Box(modifier = Modifier.background(color = MaterialTheme.colors.primary)) {
-        FilledCircle(
-            color = MaterialTheme.colors.primaryVariant,
-            modifier = Modifier
-                .size(300.dp)
-                .offset(x = (-72).dp, y = (-84).dp)
-        )
+    IllustratedBackground {
         Column {
             AppTopAppBar(titleRes = R.string.city_forecast, onBackPressed = onBackPressed)
             SunriseSunsetSection(
@@ -67,15 +58,6 @@ fun CityWeatherSection(
     modifier: Modifier = Modifier
 ) {
 
-    val dividerColors = listOf(
-        MaterialTheme.colors.primary.copy(
-            alpha = 0.04f
-        ),
-        MaterialTheme.colors.primary.copy(
-            alpha = 0.0f
-        )
-    )
-
     LazyColumn(
         modifier = modifier,
         content = {
@@ -84,16 +66,7 @@ fun CityWeatherSection(
                     cityWeather = city,
                     modifier = Modifier.padding(vertical = 40.dp, horizontal = 32.dp)
                 )
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(32.dp)
-                        .background(
-                            brush = Brush.verticalGradient(
-                                colors = dividerColors
-                            )
-                        )
-                )
+                GradientDivider()
             }
         }
     )

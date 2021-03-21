@@ -43,8 +43,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.androiddevchallenge.R
 import com.example.androiddevchallenge.data.Weather
-import com.example.androiddevchallenge.data.WeatherStatus
-import com.example.androiddevchallenge.data.mockSunnyWeather
 import com.example.androiddevchallenge.ui.common.DegreeText
 import com.example.androiddevchallenge.ui.theme.LocalImages
 import kotlinx.coroutines.launch
@@ -52,12 +50,19 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HomeScreen(
-    onFutureForeCastClicked: () -> Unit,
+    onFutureForeCastClicked: (String) -> Unit,
     onHamburgerClicked: () -> Unit,
     viewModel: HomeViewModel = viewModel()
 ) {
+
+    val bottomSheetValue = if (viewModel.isBottomSheetExpanded()) {
+        BottomSheetValue.Expanded
+    } else {
+        BottomSheetValue.Collapsed
+    }
+
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
-        bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
+        bottomSheetState = BottomSheetState(initialValue = bottomSheetValue)
     )
 
     val coroutineScope = rememberCoroutineScope()
@@ -68,7 +73,9 @@ fun HomeScreen(
         sheetContent = {
             DayChanges(
                 showFutureForecastIcon = bottomSheetScaffoldState.bottomSheetState.isCollapsed,
-                onFutureForeCastClicked = onFutureForeCastClicked,
+                onFutureForeCastClicked = {
+                    onFutureForeCastClicked(viewModel.currentCity.name)
+                },
                 onCollapseIconClicked = {
                     coroutineScope.launch {
                         bottomSheetScaffoldState.bottomSheetState.collapse()
@@ -96,7 +103,7 @@ fun HomeScreen(
 }
 
 @Composable
-fun HomeContent(onHamburgerClicked: () -> Unit) {
+fun HomeContent(onHamburgerClicked: () -> Unit, viewModel: HomeViewModel = viewModel()) {
     Column(
         modifier = Modifier
             .background(MaterialTheme.colors.primaryVariant)
@@ -104,14 +111,14 @@ fun HomeContent(onHamburgerClicked: () -> Unit) {
     ) {
         HomeTopAppBar(onHamburgerClicked = onHamburgerClicked)
         HomeWeatherContent(
-            weather = mockSunnyWeather,
+            weather = viewModel.currentWeather,
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
                 .padding(horizontal = 32.dp)
         )
         Text(
-            text = mockSunnyWeather.city,
+            text = viewModel.currentCity.name,
             color = MaterialTheme.colors.onPrimary,
             style = MaterialTheme.typography.h3,
             modifier = Modifier
@@ -143,8 +150,8 @@ fun HomeWeatherContent(weather: Weather, modifier: Modifier = Modifier) {
 
 @Composable
 fun WeatherAnimationEffect(weather: Weather) {
-    when (weather.status) {
-        WeatherStatus.Rainy -> {
+    when (weather) {
+        is Weather.Rainy -> {
             BoxWithConstraints {
                 RainEffect(
                     width = maxWidth,
@@ -160,7 +167,7 @@ fun WeatherAnimationEffect(weather: Weather) {
                 )
             }
         }
-        WeatherStatus.Snowy -> {
+        is Weather.Snowy -> {
             BoxWithConstraints {
                 RainEffect(
                     width = maxWidth,
@@ -175,12 +182,9 @@ fun WeatherAnimationEffect(weather: Weather) {
                 )
             }
         }
-        WeatherStatus.Sunny -> {
+        else -> {
+            //Empty lambda
         }
-        WeatherStatus.Cloudy -> TODO()
-        WeatherStatus.PartialCloudy -> TODO()
-        WeatherStatus.ThunderStorm -> TODO()
-        WeatherStatus.Tornado -> TODO()
     }
 }
 
