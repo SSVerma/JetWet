@@ -28,6 +28,7 @@ data class Weather(
 
 data class HourlyWeather(
     val hour: String,
+    val isCurrentHour: Boolean,
     val weather: Weather
 )
 
@@ -70,6 +71,17 @@ val mockSunnyWeather = Weather(
 val mockWeathers = listOf(
     Weather(
         status = WeatherStatus.Rainy,
+        temperature = 18,
+        statusRes = R.string.rainy,
+        iconRes = R.drawable.ic_rainy,
+        illustrationRes = R.drawable.illus_raining,
+        wind = "Wind EN 8 km/h",
+        sunriseAt = "06 : 00",
+        sunsetAt = "18 : 35",
+        city = "Paris"
+    ),
+    Weather(
+        status = WeatherStatus.Rainy,
         temperature = 19,
         statusRes = R.string.rainy,
         iconRes = R.drawable.ic_rainy,
@@ -80,8 +92,30 @@ val mockWeathers = listOf(
         city = "Paris"
     ),
     Weather(
+        status = WeatherStatus.Rainy,
+        temperature = 19,
+        statusRes = R.string.rainy,
+        iconRes = R.drawable.ic_rainy,
+        illustrationRes = R.drawable.illus_raining,
+        wind = "Wind EN 5 km/h",
+        sunriseAt = "06 : 00",
+        sunsetAt = "18 : 35",
+        city = "Paris"
+    ),
+    Weather(
         status = WeatherStatus.Snowy,
-        temperature = 8,
+        temperature = 10,
+        statusRes = R.string.snowy,
+        iconRes = R.drawable.ic_snowy,
+        illustrationRes = R.drawable.illus_snowfalling,
+        wind = "Wind EN 16 km/h",
+        sunriseAt = "06 : 00",
+        sunsetAt = "18 : 35",
+        city = "Paris"
+    ),
+    Weather(
+        status = WeatherStatus.Snowy,
+        temperature = 10,
         statusRes = R.string.snowy,
         iconRes = R.drawable.ic_snowy,
         illustrationRes = R.drawable.illus_snowfalling,
@@ -102,23 +136,12 @@ val mockWeathers = listOf(
         city = "Paris"
     ),
     Weather(
-        status = WeatherStatus.Rainy,
-        temperature = 19,
-        statusRes = R.string.rainy,
-        iconRes = R.drawable.ic_rainy,
-        illustrationRes = R.drawable.illus_raining,
-        wind = "Wind EN 8 km/h",
-        sunriseAt = "06 : 00",
-        sunsetAt = "18 : 35",
-        city = "Paris"
-    ),
-    Weather(
-        status = WeatherStatus.Snowy,
-        temperature = 8,
-        statusRes = R.string.snowy,
-        iconRes = R.drawable.ic_snowy,
-        illustrationRes = R.drawable.illus_snowfalling,
-        wind = "Wind EN 16 km/h",
+        status = WeatherStatus.Sunny,
+        temperature = 32,
+        statusRes = R.string.sunny,
+        iconRes = R.drawable.ic_sunny,
+        illustrationRes = R.drawable.illus_sunny_day,
+        wind = "Wind EN 19 km/h",
         sunriseAt = "06 : 00",
         sunsetAt = "18 : 35",
         city = "Paris"
@@ -145,6 +168,7 @@ val mockHourlyWeathers = mockWeathers.mapIndexed { index, weather ->
     }
     HourlyWeather(
         hour = formattedHour,
-        weather = weather
+        weather = weather,
+        isCurrentHour = index == mockWeathers.size - 2
     )
 }

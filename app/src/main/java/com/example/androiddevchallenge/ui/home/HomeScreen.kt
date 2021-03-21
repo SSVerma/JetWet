@@ -63,7 +63,14 @@ fun HomeScreen(onFutureForeCastClicked: () -> Unit, viewModel: HomeViewModel = v
         sheetGesturesEnabled = false,
         sheetContent = {
             DayChanges(
+                showFutureForecastIcon = bottomSheetScaffoldState.bottomSheetState.isCollapsed,
                 onFutureForeCastClicked = onFutureForeCastClicked,
+                onCollapseIconClicked = {
+                    coroutineScope.launch {
+                        bottomSheetScaffoldState.bottomSheetState.collapse()
+                    }
+                    viewModel.onTodayChangesExpansionStateChanged()
+                },
                 onTodayChangesClicked = {
                     coroutineScope.launch {
                         if (bottomSheetScaffoldState.bottomSheetState.isCollapsed) {

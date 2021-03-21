@@ -1,6 +1,8 @@
 package com.example.androiddevchallenge.ui.home
 
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -9,6 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -19,6 +22,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -45,12 +49,16 @@ import com.example.androiddevchallenge.ui.theme.yellow200
 fun DayChanges(
     onFutureForeCastClicked: () -> Unit,
     onTodayChangesClicked: () -> Unit,
+    onCollapseIconClicked: () -> Unit,
+    showFutureForecastIcon: Boolean,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = viewModel()
 ) {
     Column(modifier = modifier) {
         DayChangesHeader(
+            showFutureForecastIcon = showFutureForecastIcon,
             onFutureForeCastClicked = onFutureForeCastClicked,
+            onCollapseIconClicked = onCollapseIconClicked,
             modifier = Modifier
                 .clickable {
                     onTodayChangesClicked()
@@ -65,9 +73,12 @@ fun DayChanges(
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun DayChangesHeader(
+    showFutureForecastIcon: Boolean,
     onFutureForeCastClicked: () -> Unit,
+    onCollapseIconClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -86,12 +97,23 @@ fun DayChangesHeader(
             style = MaterialTheme.typography.subtitle2.copy(fontSize = 16.sp),
             modifier = Modifier.weight(1f)
         )
-        IconButton(onClick = onFutureForeCastClicked) {
-            Icon(
-                imageVector = AppIcons.CalendarToday,
-                contentDescription = stringResource(R.string.accessibility_future_forecast_icon),
-                tint = MaterialTheme.colors.secondary
-            )
+        AnimatedVisibility(visible = showFutureForecastIcon) {
+            IconButton(onClick = onFutureForeCastClicked) {
+                Icon(
+                    imageVector = AppIcons.CalendarToday,
+                    contentDescription = stringResource(R.string.accessibility_future_forecast_icon),
+                    tint = MaterialTheme.colors.secondary
+                )
+            }
+        }
+        AnimatedVisibility(visible = !showFutureForecastIcon) {
+            IconButton(onClick = onCollapseIconClicked) {
+                Icon(
+                    imageVector = AppIcons.ExpandMore,
+                    contentDescription = stringResource(R.string.accessibility_future_forecast_icon),
+                    tint = MaterialTheme.colors.secondary
+                )
+            }
         }
     }
 }
@@ -148,16 +170,11 @@ fun HourlyWeatherReport(
         hourlyWeathers.chunked(size = 4)
     }
 
-    val dominatingHourWeather = remember {
-        hourlyGroups.random().random()
-    }
-
     Column(modifier = modifier) {
-        hourlyGroups.forEachIndexed { index, groups ->
+        hourlyGroups.forEach { groups ->
             GroupedHourlyWeather(
                 groups = groups,
-                dominatingHourWeather = dominatingHourWeather,
-                isCurrentHour = index == 3,
+                dominatingHourWeather = groups.random(),
             )
         }
     }
@@ -167,7 +184,6 @@ fun HourlyWeatherReport(
 fun GroupedHourlyWeather(
     groups: List<HourlyWeather>,
     dominatingHourWeather: HourlyWeather,
-    isCurrentHour: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -178,7 +194,7 @@ fun GroupedHourlyWeather(
             groups.forEach {
                 HourItem(
                     hour = it.hour,
-                    isCurrentHour = isCurrentHour,
+                    isCurrentHour = it.isCurrentHour,
                     modifier = Modifier.padding(end = 16.dp, top = 16.dp, bottom = 16.dp)
                 )
                 DottedDivider()
@@ -187,15 +203,17 @@ fun GroupedHourlyWeather(
         DominatingWeatherCard(
             weatherIllusRes = dominatingHourWeather.weather.illustrationRes,
             backgroundColor = MaterialTheme.colors.primary,
-            modifier = Modifier.weight(0.50f)
+            modifier = Modifier
+                .weight(0.50f)
+                .height(190.dp)
         )
         Column(modifier = Modifier.weight(0.25f)) {
             groups.forEach {
                 HourlyWeatherItem(
                     weatherIconRes = it.weather.iconRes,
                     temperature = it.weather.temperature,
-                    isCurrentHour = isCurrentHour,
-                    modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 16.dp)
+                    isCurrentHour = it.isCurrentHour,
+                    modifier = Modifier.padding(start = 16.dp, top = 13.dp, bottom = 13.dp)
                 )
                 DottedDivider()
             }
@@ -205,9 +223,15 @@ fun GroupedHourlyWeather(
 
 @Composable
 fun HourItem(hour: String, isCurrentHour: Boolean, modifier: Modifier = Modifier) {
+    val contentColor = if (isCurrentHour) {
+        MaterialTheme.colors.primary
+    } else {
+        MaterialTheme.colors.onBackground.copy(alpha = 0.54f)
+    }
+
     Text(
         text = hour,
-        color = if (isCurrentHour) MaterialTheme.colors.primary else MaterialTheme.colors.onBackground,
+        color = contentColor,
         style = MaterialTheme.typography.body2,
         modifier = modifier
     )
@@ -220,6 +244,12 @@ fun HourlyWeatherItem(
     isCurrentHour: Boolean,
     modifier: Modifier = Modifier
 ) {
+    val contentColor = if (isCurrentHour) {
+        MaterialTheme.colors.primary
+    } else {
+        MaterialTheme.colors.onBackground.copy(alpha = 0.54f)
+    }
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.End,
@@ -229,13 +259,14 @@ fun HourlyWeatherItem(
         Icon(
             painter = painterResource(id = weatherIconRes),
             contentDescription = stringResource(id = R.string.accessibility_weather_status_icon),
-            tint = if (isCurrentHour) MaterialTheme.colors.primary else MaterialTheme.colors.onBackground,
-            modifier = Modifier.size(20.dp)
+            tint = contentColor,
+            modifier = Modifier.size(24.dp)
         )
         Spacer(modifier = Modifier.width(16.dp))
         DegreeText(
             text = temperature.toString(),
             style = MaterialTheme.typography.body2,
+            color = contentColor
         )
     }
 }
