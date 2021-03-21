@@ -152,9 +152,9 @@ fun HomeWeatherContent(weather: Weather, modifier: Modifier = Modifier) {
 
 @Composable
 fun WeatherAnimationEffect(weather: Weather) {
-    when (weather) {
-        is Weather.Rainy -> {
-            BoxWithConstraints {
+    BoxWithConstraints {
+        when (weather) {
+            is Weather.Rainy -> {
                 RainEffect(
                     width = maxWidth,
                     height = maxHeight,
@@ -169,9 +169,7 @@ fun WeatherAnimationEffect(weather: Weather) {
                     modifier = Modifier.rotate(15f)
                 )
             }
-        }
-        is Weather.Snowy -> {
-            BoxWithConstraints {
+            is Weather.Snowy -> {
                 RainEffect(
                     width = maxWidth,
                     height = maxHeight,
@@ -184,9 +182,7 @@ fun WeatherAnimationEffect(weather: Weather) {
                     }
                 )
             }
-        }
-        is Weather.Cloudy -> {
-            BoxWithConstraints {
+            is Weather.Cloudy -> {
                 RainEffect(
                     width = maxWidth,
                     height = 200.dp,
@@ -207,12 +203,35 @@ fun WeatherAnimationEffect(weather: Weather) {
                             tint = MaterialTheme.colors.onPrimary
                         )
                     },
-                    modifier = Modifier.offset(y = (-48).dp)
                 )
             }
-        }
-        else -> {
-            //Empty lambda
+            is Weather.Storm -> {
+                RainEffect(
+                    width = maxWidth,
+                    height = maxHeight,
+                    randomizeDropSize = true,
+                    isVertical = false,
+                    dropDimension = DropDefaults.dimensions().copy(
+                        dropMinWidth = 8.dp,
+                        dropMaxWidth = 24.dp,
+                        dropMinHeight = 8.dp,
+                        dropMaxHeight = 54.dp
+                    ),
+                    dropSpeed = DropDefaults.movementSpeed().copy(
+                        minSpeedMillis = 600,
+                        maxSpeedMillis = 1000
+                    ),
+                    drop = {
+                        LeafDrop(
+                            tint = MaterialTheme.colors.onPrimary
+                        )
+                    },
+                    modifier = Modifier.rotate(15f)
+                )
+            }
+            else -> {
+                //Empty lambda
+            }
         }
     }
 }

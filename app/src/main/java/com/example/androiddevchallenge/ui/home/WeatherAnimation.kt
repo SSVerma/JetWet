@@ -165,6 +165,19 @@ fun CloudDrop(
     )
 }
 
+@Composable
+fun LeafDrop(
+    modifier: Modifier = Modifier,
+    tint: Color = LocalContentColor.current
+) {
+    Icon(
+        painter = painterResource(id = R.drawable.ic_leaf),
+        contentDescription = null,
+        tint = tint,
+        modifier = modifier
+    )
+}
+
 object DropDefaults {
     private val dropMinWidth = 4.dp
     private val dropMaxWidth = 16.dp

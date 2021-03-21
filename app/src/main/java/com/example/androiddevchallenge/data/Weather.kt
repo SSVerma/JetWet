@@ -81,6 +81,21 @@ sealed class Weather(
         sunriseAt = sunriseAt,
         sunsetAt = sunsetAt,
     )
+
+    data class Storm(
+        override val temperature: Int,
+        override val wind: String,
+        override val sunriseAt: String,
+        override val sunsetAt: String,
+    ) : Weather(
+        statusRes = R.string.storm,
+        iconRes = R.drawable.ic_storm,
+        illustrationRes = R.drawable.illus_storm,
+        temperature = temperature,
+        wind = wind,
+        sunriseAt = sunriseAt,
+        sunsetAt = sunsetAt,
+    )
 }
 
 data class HourlyWeather(
@@ -106,7 +121,7 @@ data class DayWeather(
 
 val mockParisCity = City(name = "Paris")
 
-val mockRainingWeather = Weather.Rainy(
+val mockRainyWeather = Weather.Rainy(
     temperature = 19,
     wind = "Wind EN 8 km/h",
     sunriseAt = "06 : 00",
@@ -134,19 +149,27 @@ val mockCloudyWeather = Weather.Cloudy(
     sunsetAt = "18 : 35",
 )
 
+val mockStormWeather = Weather.Storm(
+    temperature = 11,
+    wind = "Wind EN 19 km/h",
+    sunriseAt = "06 : 08",
+    sunsetAt = "18 : 35",
+)
+
 val mockWeathers = listOf(
-    mockRainingWeather,
+    mockRainyWeather,
     mockSnowWeather,
     mockSunnyWeather,
-    mockCloudyWeather
+    mockCloudyWeather,
+    mockStormWeather
 )
 
 private val mockTodayWeathers = listOf(
-    mockRainingWeather,
-    mockRainingWeather,
-    mockRainingWeather,
-    mockSnowWeather,
-    mockSnowWeather,
+    mockCloudyWeather,
+    mockCloudyWeather,
+    mockRainyWeather,
+    mockRainyWeather,
+    mockRainyWeather,
     mockSunnyWeather.copy(temperature = 22),
     mockSunnyWeather.copy(temperature = 24),
     mockSunnyWeather.copy(temperature = 27),
@@ -170,7 +193,7 @@ val mockCityWeathers = listOf(
     CityWeather(
         city = "Paris",
         currentTime = "11:25",
-        weather = mockRainingWeather.copy(temperature = 22),
+        weather = mockRainyWeather.copy(temperature = 22),
     ),
     CityWeather(
         city = "London",
@@ -192,11 +215,11 @@ val mockCityWeathers = listOf(
 val mockDayWeathers = listOf(
     DayWeather(
         day = "Monday, 22 March",
-        weather = mockRainingWeather.copy(temperature = 18),
+        weather = mockRainyWeather.copy(temperature = 18),
     ),
     DayWeather(
         day = "Tuesday, 23 March",
-        weather = mockRainingWeather.copy(temperature = 18),
+        weather = mockRainyWeather.copy(temperature = 18),
     ),
     DayWeather(
         day = "Wednesday, 24 March",

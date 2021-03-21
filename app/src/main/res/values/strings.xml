@@ -24,4 +24,5 @@
     <string name="city_weather_forecast">City Weather</string>
     <string name="future_weather_forecast">Future Weather Forecast</string>
     <string name="cloudy">Cloudy</string>
+    <string name="storm">Storm</string>
 </resources>
